@@ -1,0 +1,6 @@
+mlp_venv/
+.venv/
+env/
+virtualenv/
+**/venv/
+**/__pycache__/
