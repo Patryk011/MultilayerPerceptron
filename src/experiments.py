@@ -1,6 +1,3 @@
-"""
-Moduł odpowiedzialny za eksperymenty z różnymi algorytmami uczenia i parametrami modelu.
-"""
 
 import numpy as np
 import pandas as pd
@@ -8,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV, cross_val_score, StratifiedKFold
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score
 import time
 import os
 import itertools
@@ -78,8 +75,6 @@ def compare_learning_algorithms(X_train, y_train, X_test, y_test):
             accuracy = accuracy_score(y_test, y_pred)
             precision = precision_score(y_test, y_pred)
             recall = recall_score(y_test, y_pred)
-            f1 = f1_score(y_test, y_pred)
-            auc_score = roc_auc_score(y_test, y_pred_proba) if y_pred_proba is not None else None
             
             # Zapisanie wyników
             result = {
@@ -87,8 +82,7 @@ def compare_learning_algorithms(X_train, y_train, X_test, y_test):
                 'accuracy': accuracy,
                 'precision': precision,
                 'recall': recall,
-                'f1': f1,
-                'auc': auc_score,
+
                 'training_time': training_time,
                 'n_iter': model.n_iter_,
                 'converged': model.n_iter_ < model.max_iter
@@ -99,8 +93,6 @@ def compare_learning_algorithms(X_train, y_train, X_test, y_test):
             print(f"  Accuracy: {accuracy:.4f}")
             print(f"  Precision: {precision:.4f}")
             print(f"  Recall: {recall:.4f}")
-            print(f"  F1-score: {f1:.4f}")
-            print(f"  AUC: {auc_score:.4f}" if auc_score else "  AUC: N/A")
             print(f"  Czas treningu: {training_time:.2f}s")
             print(f"  Liczba iteracji: {model.n_iter_}")
             
@@ -129,7 +121,7 @@ def visualize_algorithm_comparison(results_df, filename="algorithm_comparison.pn
     
     # Wykres 1: Porównanie metryk
     ax1 = axes[0, 0]
-    metrics = ['accuracy', 'precision', 'recall', 'f1']
+    metrics = ['accuracy', 'precision', 'recall']
     x = np.arange(len(results_df))
     width = 0.2
     
@@ -160,17 +152,8 @@ def visualize_algorithm_comparison(results_df, filename="algorithm_comparison.pn
     ax3.set_title('Liczba iteracji do konwergencji')
     ax3.grid(True, axis='y')
     
-    # Wykres 4: AUC (jeśli dostępne)
-    ax4 = axes[1, 1]
-    if 'auc' in results_df.columns and not results_df['auc'].isna().all():
-        ax4.bar(results_df['solver'], results_df['auc'], color='purple')
-        ax4.set_xlabel('Algorytm')
-        ax4.set_ylabel('AUC-ROC')
-        ax4.set_title('Pole pod krzywą ROC')
-        ax4.grid(True, axis='y')
-    else:
-        ax4.text(0.5, 0.5, 'AUC niedostępne', ha='center', va='center', transform=ax4.transAxes)
-        ax4.set_title('AUC-ROC')
+   
+       
     
     plt.tight_layout()
     plt.savefig(os.path.join(config.OUTPUT_DIR, "plots", "model", filename), 
@@ -387,8 +370,6 @@ def comprehensive_model_testing(X_train, y_train, X_test, y_test):
         accuracy = accuracy_score(y_test, y_pred)
         precision = precision_score(y_test, y_pred)
         recall = recall_score(y_test, y_pred)
-        f1 = f1_score(y_test, y_pred)
-        auc_score = roc_auc_score(y_test, y_pred_proba)
         
         # Zapisanie wyników
         result = {
@@ -397,8 +378,6 @@ def comprehensive_model_testing(X_train, y_train, X_test, y_test):
             'accuracy': accuracy,
             'precision': precision,
             'recall': recall,
-            'f1': f1,
-            'auc': auc_score,
             'training_time': training_time,
             'n_iter': model.n_iter_
         }
@@ -406,7 +385,6 @@ def comprehensive_model_testing(X_train, y_train, X_test, y_test):
         results.append(result)
         
         print(f"  Accuracy: {accuracy:.4f}")
-        print(f"  F1-score: {f1:.4f}")
         print(f"  Czas treningu: {training_time:.2f}s")
     
     # Konwersja do DataFrame
@@ -444,7 +422,7 @@ def visualize_comprehensive_testing(results_df, filename="comprehensive_testing.
     
     # Wykres 2: Porównanie metryk
     ax2 = axes[0, 1]
-    metrics = ['accuracy', 'precision', 'recall', 'f1']
+    metrics = ['accuracy', 'precision', 'recall']
     x = np.arange(len(results_df))
     width = 0.2
     
@@ -467,18 +445,7 @@ def visualize_comprehensive_testing(results_df, filename="comprehensive_testing.
     ax3.set_title('Kompromis czas-dokładność')
     ax3.grid(True)
     
-    # Wykres 4: Ranking architektur
-    ax4 = axes[1, 1]
-    # Sortujemy według F1-score
-    sorted_results = results_df.sort_values('f1', ascending=True)
-    y_pos = np.arange(len(sorted_results))
-    
-    ax4.barh(y_pos, sorted_results['f1'], alpha=0.7)
-    ax4.set_yticks(y_pos)
-    ax4.set_yticklabels(sorted_results['architecture'])
-    ax4.set_xlabel('F1-score')
-    ax4.set_title('Ranking architektur według F1-score')
-    ax4.grid(True, axis='x')
+   
     
     plt.tight_layout()
     plt.savefig(os.path.join(config.OUTPUT_DIR, "plots", "model", filename), 
