@@ -1,0 +1,48 @@
+============================================================
+RAPORT KLASYFIKACJI RAKA PIERSI
+============================================================
+
+METRYKI KLASYFIKACJI
+------------------------------
+Accuracy:  0.9441
+Precision: 0.9592
+Recall:    0.8868
+
+MACIERZ POMYLEK
+------------------------------
+Rzeczywiste \ Przewidywane
+Lagodny (0)    |  88 |   2 |
+Zlosliwy (1)   |   6 |  47 |
+               |  0  |  1  |
+
+INTERPRETACJA MACIERZY POMYLEK
+------------------------------
+True Negatives (TN):   88 (61.5%) - Poprawnie sklasyfikowane przypadki lagodne
+False Positives (FP):   2 (1.4%) - Przypadki lagodne blednie sklasyfikowane jako zlosliwe
+False Negatives (FN):   6 (4.2%) - Przypadki zlosliwe blednie sklasyfikowane jako lagodne
+True Positives (TP):   47 (32.9%) - Poprawnie sklasyfikowane przypadki zlosliwe
+
+WYNIKI WALIDACJI KRZYZOWEJ
+------------------------------
+Accuracy:  0.9224 ± 0.0295
+Precision: 0.8723 ± 0.0516
+Recall:    0.9306 ± 0.0369
+Loss:      0.2110 ± 0.0388
+
+SZCZEGOLOWE WYNIKI DLA KAZDEGO FOLDA
+------------------------------
+Fold | Accuracy | Precision | Recall   | Loss
+-----|----------|-----------|----------|----------
+   1 |   0.9767 |    0.9688 |   0.9688 |   0.2202
+   2 |   0.8941 |    0.8235 |   0.9032 |   0.2826
+   3 |   0.9059 |    0.8750 |   0.8750 |   0.1871
+   4 |   0.9294 |    0.8611 |   0.9688 |   0.1741
+   5 |   0.9059 |    0.8333 |   0.9375 |   0.1913
+
+WNIOSKI
+------------------------------
+- Model osiaga wysoka dokladnosc (>90%), co swiadczy o jego dobrej jakosci.
+- Czulosc modelu (recall <90%) moze wymagac poprawy, aby minimalizowac liczbe falszywie negatywnych wynikow.
+- Model ma bardzo wysoka precyzje (>95%), co oznacza niskie ryzyko falszywie pozytywnych wynikow.
+- Model nie rozpoznal 6 przypadkow zlosliwych, co stanowi 11.3% wszystkich przypadkow zlosliwych.
+  W kontekscie medycznym nalezy dazyc do minimalizacji tej wartosci.
