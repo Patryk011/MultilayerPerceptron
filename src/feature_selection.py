@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.feature_selection import SelectKBest, f_classif, mutual_info_classif
 
-# Importy z naszego projektu
 import config
 
 def select_features_anova(X_train, y_train, X_test, k=None):
@@ -195,7 +194,6 @@ def perform_feature_selection(data_dict):
     
     return data_dict
 
-# Gdy moduł jest uruchamiany bezpośrednio
 if __name__ == "__main__":
     from data_processing import process_data
     

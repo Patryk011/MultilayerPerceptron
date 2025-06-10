@@ -45,8 +45,3 @@ MODEL_CONFIG = {
 TRAINING_CONFIG = {
     'cv_folds': 5,                   
 }
-
-# Parametry ewaluacji modelu
-EVALUATION_CONFIG = {
-    'threshold': 0.5,                
-}

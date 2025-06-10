@@ -10,26 +10,7 @@ def create_mlp_classifier(hidden_layer_sizes=None, activation=None, solver=None,
                          batch_size=None, learning_rate=None, learning_rate_init=None,
                          max_iter=None, early_stopping=None, validation_fraction=None,
                          n_iter_no_change=None, random_state=None):
-    """
-    Tworzy model perceptronu wielowarstwowego (MLP) z scikit-learn.
-    
-    Args:
-        hidden_layer_sizes (tuple): Rozmiary warstw ukrytych
-        activation (str): Funkcja aktywacji ('relu', 'tanh', 'logistic')
-        solver (str): Algorytm optymalizacji ('adam', 'sgd', 'lbfgs')
-        alpha (float): Parametr regularyzacji L2
-        batch_size (int): Rozmiar batcha (dla 'adam' i 'sgd')
-        learning_rate (str): Strategia uczenia ('constant', 'adaptive', 'invscaling')
-        learning_rate_init (float): Początkowy współczynnik uczenia
-        max_iter (int): Maksymalna liczba iteracji (epok)
-        early_stopping (bool): Czy używać wczesnego zatrzymania
-        validation_fraction (float): Frakcja danych treningowych do walidacji
-        n_iter_no_change (int): Liczba iteracji bez poprawy do wczesnego zatrzymania
-        random_state (int): Ziarno losowości
-        
-    Returns:
-        model: Model MLPClassifier
-    """
+   
     
     if hidden_layer_sizes is None:
         hidden_layer_sizes = config.MODEL_CONFIG['hidden_layer_sizes']
@@ -78,13 +59,7 @@ def create_mlp_classifier(hidden_layer_sizes=None, activation=None, solver=None,
     return model
 
 def save_model(model, filename="mlp_model.pkl"):
-    """
-    Zapisuje model do pliku.
-    
-    Args:
-        model: Model do zapisania
-        filename (str): Nazwa pliku
-    """
+  
     filepath = os.path.join(config.OUTPUT_DIR, "models", filename)
     with open(filepath, 'wb') as f:
         pickle.dump(model, f)
@@ -92,15 +67,7 @@ def save_model(model, filename="mlp_model.pkl"):
     print(f"Model zapisany do pliku: {filepath}")
 
 def load_model(filename="mlp_model.pkl"):
-    """
-    Wczytuje model z pliku.
-    
-    Args:
-        filename (str): Nazwa pliku
-        
-    Returns:
-        model: Wczytany model
-    """
+  
     filepath = os.path.join(config.OUTPUT_DIR, "models", filename)
     with open(filepath, 'rb') as f:
         model = pickle.load(f)
