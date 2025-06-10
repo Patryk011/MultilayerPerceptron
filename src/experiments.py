@@ -8,7 +8,6 @@ from sklearn.model_selection import GridSearchCV, cross_val_score, StratifiedKFo
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 import time
 import os
-import itertools
 
 
 import config
