@@ -56,14 +56,3 @@ ALGORITHM_EXPERIMENTS = {
     'max_iterations': [500, 1000, 2000]
 }
 
-# Parametry do testowania różnych konfiguracji modelu
-MODEL_PARAMETER_GRID = {
-    'hidden_layer_sizes': [
-        (8,), (16,), (32,),
-        (8, 4), (16, 8), (32, 16), (64, 32),
-        (16, 8, 4), (32, 16, 8)
-    ],
-    'alpha': [0.0001, 0.001, 0.01, 0.1],
-    'learning_rate_init': [0.1, 0.01, 0.001, 0.0001],
-    'activation': ['relu', 'tanh', 'logistic']
-}
