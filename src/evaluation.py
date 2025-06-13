@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix, classification_report
+from sklearn.metrics import accuracy_score, recall_score, confusion_matrix, classification_report
 import os
 
 
@@ -21,7 +21,7 @@ def evaluate_model(model, X_test, y_test, threshold=None):
     
     # Metryki podstawowe
     accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred)
+
     recall = recall_score(y_test, y_pred)
     
     # Macierz pomyłek
@@ -30,7 +30,6 @@ def evaluate_model(model, X_test, y_test, threshold=None):
     # Wyświetlenie wyników
     print(f"Wyniki ewaluacji modelu:")
     print(f"  Accuracy: {accuracy:.4f}")
-    print(f"  Precision: {precision:.4f}")
     print(f"  Recall: {recall:.4f}")
     
     print("\nMacierz pomylek:")
@@ -42,7 +41,6 @@ def evaluate_model(model, X_test, y_test, threshold=None):
     # Przygotowanie wyników
     evaluation_results = {
         'accuracy': accuracy,
-        'precision': precision,
         'recall': recall,
         'confusion_matrix': cm,
         'y_pred': y_pred,
@@ -102,7 +100,6 @@ def generate_text_report(evaluation_results, cv_results=None, filename="classifi
         f.write("METRYKI KLASYFIKACJI\n")
         f.write("-" * 30 + "\n")
         f.write(f"Accuracy:  {evaluation_results['accuracy']:.4f}\n")
-        f.write(f"Precision: {evaluation_results['precision']:.4f}\n")
         f.write(f"Recall:    {evaluation_results['recall']:.4f}\n\n")
         
         # Macierz pomyłek
@@ -130,20 +127,20 @@ def generate_text_report(evaluation_results, cv_results=None, filename="classifi
             f.write("WYNIKI WALIDACJI KRZYZOWEJ\n")
             f.write("-" * 30 + "\n")
             f.write(f"Accuracy:  {cv_results['accuracy']['mean']:.4f} ± {cv_results['accuracy']['std']:.4f}\n")
-            f.write(f"Precision: {cv_results['precision']['mean']:.4f} ± {cv_results['precision']['std']:.4f}\n")
+            
             f.write(f"Recall:    {cv_results['recall']['mean']:.4f} ± {cv_results['recall']['std']:.4f}\n")
             f.write(f"Loss:      {cv_results['loss']['mean']:.4f} ± {cv_results['loss']['std']:.4f}\n\n")
             
             f.write("SZCZEGOLOWE WYNIKI DLA KAZDEGO FOLDA\n")
             f.write("-" * 30 + "\n")
-            f.write("Fold | Accuracy | Precision | Recall   | Loss\n")
-            f.write("-----|----------|-----------|----------|----------\n")
+            f.write("Fold | Accuracy |  Recall   | Loss\n")
+            f.write("-----|----------|----------|----------\n")
             for i in range(len(cv_results['accuracy']['values'])):
                 acc = cv_results['accuracy']['values'][i]
-                prec = cv_results['precision']['values'][i]
+              
                 rec = cv_results['recall']['values'][i]
                 loss = cv_results['loss']['values'][i]
-                f.write(f"{i+1:4d} | {acc:8.4f} | {prec:9.4f} | {rec:8.4f} | {loss:8.4f}\n")
+                f.write(f"{i+1:4d} | {acc:8.4f} | {rec:8.4f} | {loss:8.4f}\n")
             f.write("\n")
         
         # Wnioski
@@ -165,11 +162,6 @@ def generate_text_report(evaluation_results, cv_results=None, filename="classifi
             f.write("- Model ma wysoka czulosc (recall >90%), co jest istotne w kontekscie diagnostyki medycznej.\n")
         else:
             f.write("- Czulosc modelu (recall <90%) moze wymagac poprawy, aby minimalizowac liczbe falszywie negatywnych wynikow.\n")
-        
-        if evaluation_results['precision'] > 0.95:
-            f.write("- Model ma bardzo wysoka precyzje (>95%), co oznacza niskie ryzyko falszywie pozytywnych wynikow.\n")
-        elif evaluation_results['precision'] > 0.9:
-            f.write("- Model ma wysoka precyzje (>90%), co oznacza wzglednie niskie ryzyko falszywie pozytywnych wynikow.\n")
         
         if fn > 0:
             f.write(f"- Model nie rozpoznal {fn} przypadkow zlosliwych, co stanowi {fn/(fn+tp)*100:.1f}% wszystkich przypadkow zlosliwych.\n")

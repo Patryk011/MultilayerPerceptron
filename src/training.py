@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import cross_validate, StratifiedKFold
-from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.metrics import accuracy_score, recall_score
 import time
 import os
 
@@ -46,7 +46,7 @@ def perform_cross_validation(model, X, y, cv=None):
     cv_strategy = StratifiedKFold(n_splits=cv, shuffle=True, random_state=config.RANDOM_STATE)
     
     # Definicja metryk do obliczenia
-    scoring = ['accuracy', 'precision', 'recall', 'neg_log_loss']
+    scoring = ['accuracy', 'recall', 'neg_log_loss']
     
     # Przeprowadzenie walidacji krzyżowej
     start_time = time.time()
@@ -63,11 +63,10 @@ def perform_cross_validation(model, X, y, cv=None):
     print("-" * 60)
     for i in range(cv):
         accuracy = cv_results['test_accuracy'][i]
-        precision = cv_results['test_precision'][i]
         recall = cv_results['test_recall'][i]
         loss = -cv_results['test_neg_log_loss'][i]  # Negujemy bo sklearn zwraca neg_log_loss
         
-        print(f"Fold {i+1}: Accuracy={accuracy:.4f}, Precision={precision:.4f}, "
+        print(f"Fold {i+1}: Accuracy={accuracy:.4f},  "
               f"Recall={recall:.4f}, Loss={loss:.4f}")
     
     # Obliczenie średnich i odchyleń standardowych
@@ -77,11 +76,7 @@ def perform_cross_validation(model, X, y, cv=None):
             'std': np.std(cv_results['test_accuracy']),
             'values': cv_results['test_accuracy']
         },
-        'precision': {
-            'mean': np.mean(cv_results['test_precision']),
-            'std': np.std(cv_results['test_precision']),
-            'values': cv_results['test_precision']
-        },
+        
         'recall': {
             'mean': np.mean(cv_results['test_recall']),
             'std': np.std(cv_results['test_recall']),
@@ -99,7 +94,6 @@ def perform_cross_validation(model, X, y, cv=None):
     print("-" * 60)
     print(f"Podsumowanie walidacji krzyzowej ({cv_time:.2f} sekund):")
     print(f"  Accuracy: {results_summary['accuracy']['mean']:.4f} ± {results_summary['accuracy']['std']:.4f}")
-    print(f"  Precision: {results_summary['precision']['mean']:.4f} ± {results_summary['precision']['std']:.4f}")
     print(f"  Recall: {results_summary['recall']['mean']:.4f} ± {results_summary['recall']['std']:.4f}")
     print(f"  Loss: {results_summary['loss']['mean']:.4f} ± {results_summary['loss']['std']:.4f}")
     

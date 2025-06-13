@@ -1,19 +1,19 @@
-
 RANDOM_STATE = 42
 OUTPUT_DIR = "results"
 
 # Parametry przetwarzania danych
 DATA_CONFIG = {
-    'test_size': 0.25,        # Rozmiar zbioru testowego (25% danych)
+    'test_size': 0.20,        # Rozmiar zbioru testowego (25% danych)
     'random_state': RANDOM_STATE,
     'dataset_id': 17,         # ID zbioru danych Breast Cancer Wisconsin w ucimlrepo
 }
 
-# Parametry selekcji cech
+#Parametry selekcji cech
 FEATURE_SELECTION_CONFIG = {
-    'method': 'anova',        # Metoda selekcji cech (ANOVA F-value)
-    'k': 10,                  # Liczba cech do wybrania
+   'method': 'anova',        # Metoda selekcji cech (ANOVA F-value)
+   'k': 10,                  # Liczba cech do wybrania
 }
+
 
 # Parametry wizualizacji
 VISUALIZATION_CONFIG = {
@@ -25,12 +25,12 @@ VISUALIZATION_CONFIG = {
 
 # Parametry modelu scikit-learn MLP
 MODEL_CONFIG = {
-    'hidden_layer_sizes': (16, 8),    # Architektura sieci: dwie warstwy ukryte (16 i 8 neuronów)
-    'activation': 'relu',             # Funkcja aktywacji: ReLU
-    'solver': 'adam',                 # Algorytm optymalizacji: Adam
+    'hidden_layer_sizes': (64,32),   # Architektura sieci: dwie warstwy ukryte (16 i 8 neuronów)
+    'activation': 'relu',            # Funkcja aktywacji: ReLU
+    'solver': 'adam',                   # Algorytm optymalizacji: Adam
     'alpha': 0.001,                   # Parametr regularyzacji L2
-    'batch_size': 32,                 # Rozmiar batcha
-    'learning_rate': 'adaptive',      # Adaptacyjny współczynnik uczenia
+    'batch_size':64,                 # Rozmiar batcha
+    'learning_rate':'constant',       # Typ współczynnika uczenia
     'learning_rate_init': 0.001,      # Początkowy współczynnik uczenia
     'max_iter': 1000,                 # Maksymalna liczba iteracji (epok)
     'early_stopping': True,           # Wczesne zatrzymanie
@@ -48,11 +48,3 @@ TRAINING_CONFIG = {
 EVALUATION_CONFIG = {
     'threshold': 0.5,                 # Próg decyzyjny dla klasyfikacji binarnej
 }
-
-ALGORITHM_EXPERIMENTS = {
-    'solvers': ['adam', 'sgd', 'lbfgs'],
-    'learning_rates': [0.1, 0.01, 0.001, 0.0001],
-    'batch_sizes': [16, 32, 64, 128],
-    'max_iterations': [500, 1000, 2000]
-}
-

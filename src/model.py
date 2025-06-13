@@ -51,7 +51,7 @@ def create_mlp_classifier(hidden_layer_sizes=None, activation=None, solver=None,
         validation_fraction=validation_fraction,
         n_iter_no_change=n_iter_no_change,
         random_state=random_state,
-        verbose=True  
+        verbose=False  
     )
     
     print(f"Utworzono model MLP z {len(hidden_layer_sizes)} warstwami ukrytymi: {hidden_layer_sizes}")
