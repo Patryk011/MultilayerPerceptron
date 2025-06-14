@@ -44,31 +44,7 @@ TRAINING_CONFIG = {
 }
 
 
-GRID_SEARCH_CONFIG = {
-    'param_grid': {
-        'hidden_layer_sizes': [
-            (16, 8),       
-            (64, 32),      
-            (32,),         
-            (100, 50, 25)  
-        ],
-        'activation': ['relu', 'tanh', 'logistic'],     
-        'solver': ['adam', 'sgd'],                      
-        'alpha': [0.0001, 0.001, 0.01, 0.1],          
-        'learning_rate': ['constant', 'adaptive'],     
-        'max_iter': [500, 1000, 1500],           
-        'batch_size': [32],                            
-        'learning_rate_init': [0.001],                 
-        'early_stopping': [True],                      
-        'validation_fraction': [0.2],                  
-        'n_iter_no_change': [20],                      
-        'random_state': [RANDOM_STATE],                
-    },
-    'scoring': ['accuracy', 'recall'],      
-    'refit': 'recall',                     
-    'n_jobs': -1,                          
-    'verbose': 1,                          
-}
+
 
 EVALUATION_CONFIG = {
     'threshold': 0.5,                
