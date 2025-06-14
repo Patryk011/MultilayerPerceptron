@@ -86,7 +86,7 @@ def visualize_confusion_matrix(cm, filename="confusion_matrix.png"):
     
     print(f"Zapisano wizualizacje macierzy pomylek: {filename}")
 
-def generate_text_report(evaluation_results, cv_results=None, grid_search_results=None, filename="classification_report.txt"):
+def generate_text_report(evaluation_results, cv_results=None, grid_search_results=None, model_comparison=None, filename="classification_report.txt"):
     """
     Generuje szczegółowy raport tekstowy z wyników klasyfikacji.
     
@@ -94,6 +94,7 @@ def generate_text_report(evaluation_results, cv_results=None, grid_search_result
         evaluation_results (dict): Wyniki ewaluacji modelu
         cv_results (dict): Wyniki walidacji krzyżowej
         grid_search_results (dict): Wyniki grid search (opcjonalne)
+        model_comparison (dict): Porównanie modelu bazowego vs zoptymalizowanego (opcjonalne)
         filename (str): Nazwa pliku raportu
     """
     filepath = os.path.join(config.OUTPUT_DIR, "reports", filename)
@@ -103,6 +104,24 @@ def generate_text_report(evaluation_results, cv_results=None, grid_search_result
         f.write("=" * 60 + "\n")
         f.write("RAPORT KLASYFIKACJI RAKA PIERSI\n")
         f.write("=" * 60 + "\n\n")
+        
+        # Porównanie modeli (jeśli dostępne)
+        if model_comparison:
+            f.write("PORÓWNANIE: MODEL BAZOWY vs ZOPTYMALIZOWANY\n")
+            f.write("-" * 30 + "\n")
+            f.write(f"MODEL BAZOWY (MODEL_CONFIG):\n")
+            f.write(f"  Accuracy: {model_comparison['base_accuracy']:.4f}\n")
+            f.write(f"  Recall:   {model_comparison['base_recall']:.4f}\n\n")
+            
+            f.write(f"MODEL ZOPTYMALIZOWANY (Grid Search):\n")
+            f.write(f"  Accuracy: {model_comparison['optimized_accuracy']:.4f}\n")
+            f.write(f"  Recall:   {model_comparison['optimized_recall']:.4f}\n\n")
+            
+            f.write(f"POPRAWA PO OPTYMALIZACJI:\n")
+            acc_perc = model_comparison['accuracy_improvement']/model_comparison['base_accuracy']*100
+            rec_perc = model_comparison['recall_improvement']/model_comparison['base_recall']*100
+            f.write(f"  Accuracy: {model_comparison['accuracy_improvement']:+.4f} ({acc_perc:+.2f}%)\n")
+            f.write(f"  Recall:   {model_comparison['recall_improvement']:+.4f} ({rec_perc:+.2f}%)\n\n")
         
         # Informacja o grid search
         if grid_search_results:
@@ -166,33 +185,73 @@ def generate_text_report(evaluation_results, cv_results=None, grid_search_result
         f.write("WNIOSKI\n")
         f.write("-" * 30 + "\n")
         
+        if model_comparison:
+            acc_improved = model_comparison['accuracy_improvement'] > 0
+            rec_improved = model_comparison['recall_improvement'] > 0
+            if acc_improved or rec_improved:
+                f.write("- Grid search skutecznie zoptymalizował model - osiągnięto poprawę względem konfiguracji bazowej.\n")
+            else:
+                f.write("- Model bazowy z MODEL_CONFIG był już dobrze skonfigurowany - grid search nie przyniósł znaczącej poprawy.\n")
+        
         if grid_search_results:
-            f.write("- Zastosowano optymalizacje hiperparametrow za pomoca grid search, co pozwolilo na\n")
-            f.write(f"  znalezienie najlepszej konfiguracji sposrod {grid_search_results['n_combinations']} przetestowanych.\n")
+            f.write("- Zastosowano optymalizację hiperparametrów za pomocą grid search, co pozwoliło na\n")
+            f.write(f"  znalezienie najlepszej konfiguracji spośród {grid_search_results['n_combinations']} przetestowanych.\n")
         
         if evaluation_results['accuracy'] > 0.95:
-            f.write("- Model osiaga bardzo wysoka dokladnosc (>95%), co swiadczy o jego doskonalej jakosci.\n")
+            f.write("- Model osiąga bardzo wysoką dokładność (>95%), co świadczy o jego doskonałej jakości.\n")
         elif evaluation_results['accuracy'] > 0.9:
-            f.write("- Model osiaga wysoka dokladnosc (>90%), co swiadczy o jego dobrej jakosci.\n")
+            f.write("- Model osiąga wysoką dokładność (>90%), co świadczy o jego dobrej jakości.\n")
         elif evaluation_results['accuracy'] > 0.8:
-            f.write("- Model osiaga dobra dokladnosc (>80%), ale jest miejsce na poprawe.\n")
+            f.write("- Model osiąga dobrą dokładność (>80%), ale jest miejsce na poprawę.\n")
         else:
-            f.write("- Dokladnosc modelu jest umiarkowana (<80%), co wskazuje na potrzebe dalszej optymalizacji.\n")
+            f.write("- Dokładność modelu jest umiarkowana (<80%), co wskazuje na potrzebę dalszej optymalizacji.\n")
         
         if evaluation_results['recall'] > 0.95:
-            f.write("- Model ma bardzo wysoka czulosc (recall >95%), co jest kluczowe w kontekscie diagnostyki medycznej.\n")
+            f.write("- Model ma bardzo wysoką czułość (recall >95%), co jest kluczowe w kontekście diagnostyki medycznej.\n")
         elif evaluation_results['recall'] > 0.9:
-            f.write("- Model ma wysoka czulosc (recall >90%), co jest istotne w kontekscie diagnostyki medycznej.\n")
+            f.write("- Model ma wysoką czułość (recall >90%), co jest istotne w kontekście diagnostyki medycznej.\n")
         else:
-            f.write("- Czulosc modelu (recall <90%) moze wymagac poprawy, aby minimalizowac liczbe falszywie negatywnych wynikow.\n")
+            f.write("- Czułość modelu (recall <90%) może wymagać poprawy, aby minimalizować liczbę fałszywie negatywnych wyników.\n")
         
         if fn > 0:
-            f.write(f"- Model nie rozpoznal {fn} przypadkow zlosliwych, co stanowi {fn/(fn+tp)*100:.1f}% wszystkich przypadkow zlosliwych.\n")
-            f.write("  W kontekscie medycznym nalezy dazyc do minimalizacji tej wartosci.\n")
+            f.write(f"- Model nie rozpoznał {fn} przypadków złośliwych, co stanowi {fn/(fn+tp)*100:.1f}% wszystkich przypadków złośliwych.\n")
+            f.write("  W kontekście medycznym należy dążyć do minimalizacji tej wartości.\n")
     
     print(f"Raport klasyfikacji zapisany do: {filepath}")
 
 def evaluate_and_report(data_dict):
+    """
+    Przeprowadza ewaluację modelu i generuje raport.
+    
+    Args:
+        data_dict (dict): Słownik z danymi i wytrenowanym modelem
+        
+    Returns:
+        dict: Zaktualizowany słownik z wynikami ewaluacji
+    """
+    print("\n--- EWALUACJA I RAPORTOWANIE ---")
+    
+    # Ewaluacja modelu
+    evaluation_results = evaluate_model(
+        data_dict['model'],
+        data_dict['X_test_selected'],
+        data_dict['y_test']
+    )
+    
+    # Generowanie raportu z uwzględnieniem porównania modeli
+    generate_text_report(
+        evaluation_results, 
+        cv_results=data_dict.get('cv_results', None),
+        grid_search_results=data_dict.get('grid_search_results', None),
+        model_comparison=data_dict.get('model_comparison', None)
+    )
+    
+    # Aktualizacja słownika danych
+    data_dict.update({
+        'evaluation_results': evaluation_results
+    })
+    
+    return data_dict
     """
     Przeprowadza ewaluację modelu i generuje raport.
     

@@ -3,66 +3,50 @@ OUTPUT_DIR = "results"
 
 # Parametry przetwarzania danych
 DATA_CONFIG = {
-    'test_size': 0.20,        # Rozmiar zbioru testowego (25% danych)
+    'test_size': 0.20,       
     'random_state': RANDOM_STATE,
-    'dataset_id': 17,         # ID zbioru danych Breast Cancer Wisconsin w ucimlrepo
+    'dataset_id': 17,        
 }
 
 #Parametry selekcji cech
 FEATURE_SELECTION_CONFIG = {
-   'method': 'anova',        # Metoda selekcji cech (ANOVA F-value)
-   'k': 10,                  # Liczba cech do wybrania
+   'method': 'anova',       
+   'k': 10,                 
 }
 
 
 # Parametry wizualizacji
 VISUALIZATION_CONFIG = {
-    'figsize_medium': (8, 6),     # Standardowy rozmiar wykresów
-    'figsize_large': (10, 8),     # Duży rozmiar wykresów  
-    'dpi': 300,                   # Rozdzielczość wykresów
-    'style': 'seaborn-v0_8',      # Styl wykresów
+    'figsize_medium': (8, 6),    
+    'figsize_large': (10, 8),    
+    'dpi': 300,                  
+    'style': 'seaborn-v0_8',     
 }
 
 # Parametry modelu scikit-learn MLP
 MODEL_CONFIG = {
-    'hidden_layer_sizes': (64,32),   # Architektura sieci: dwie warstwy ukryte (16 i 8 neuronów)
-    'activation': 'relu',            # Funkcja aktywacji: ReLU
-    'solver': 'adam',                   # Algorytm optymalizacji: Adam
-    'alpha': 0.001,                   # Parametr regularyzacji L2
-    'batch_size':64,                 # Rozmiar batcha
-    'learning_rate':'constant',       # Typ współczynnika uczenia
-    'learning_rate_init': 0.001,      # Początkowy współczynnik uczenia
-    'max_iter': 1000,                 # Maksymalna liczba iteracji (epok)
-    'early_stopping': True,           # Wczesne zatrzymanie
-    'validation_fraction': 0.2,       # Frakcja danych treningowych używana do walidacji
-    'n_iter_no_change': 20,           # Liczba iteracji bez poprawy do wczesnego zatrzymania
-    'random_state': RANDOM_STATE,     # Ziarno losowości
+    'hidden_layer_sizes': (64,32),  
+    'activation': 'relu',           
+    'solver': 'adam',                  
+    'alpha': 0.001,                  
+    'batch_size':64,                
+    'learning_rate':'constant',      
+    'learning_rate_init': 0.001,     
+    'max_iter': 1000,                
+    'early_stopping': True,          
+    'validation_fraction': 0.2,      
+    'n_iter_no_change': 20,          
+    'random_state': RANDOM_STATE,    
 }
 
 # Parametry treningu
 TRAINING_CONFIG = {
-    'cv_folds': 5,                    # Liczba foldów dla walidacji krzyżowej
+    'cv_folds': 5,                   
 }
 
-GRID_SEARCH_CONFIG = {
-    'param_grid': {
-        'hidden_layer_sizes': [
-            (32,), (64,), (128,),           # Jedna warstwa ukryta
-            (64, 32), (128, 64), (100, 50), # Dwie warstwy ukryte
-            (128, 64, 32)                   # Trzy warstwy ukryte
-        ],
-        'alpha': [0.0001, 0.001, 0.01, 0.1],  # Regularyzacja L2
-        'learning_rate_init': [0.001, 0.01, 0.1],  # Współczynnik uczenia
-        'activation': ['relu', 'tanh'],      # Funkcja aktywacji
-        'solver': ['adam', 'lbfgs']          # Algorytm optymalizacji
-    },
-    'scoring': ['accuracy', 'recall'],       # Metryki do optymalizacji
-    'refit': 'recall',                      # Metryka do wyboru najlepszego modelu
-    'n_jobs': -1,                           # Liczba równoległych procesów (-1 = wszystkie dostępne)
-    'verbose': 1,                           # Poziom szczegółowości komunikatów
-}
+
 
 # Parametry ewaluacji modelu
 EVALUATION_CONFIG = {
-    'threshold': 0.5,                 # Próg decyzyjny dla klasyfikacji binarnej
+    'threshold': 0.5,                
 }

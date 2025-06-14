@@ -12,6 +12,7 @@ from src.model import create_mlp_classifier, save_model
 def perform_grid_search(X_train, y_train, cv=None):
     """
     Przeprowadza grid search dla optymalizacji hiperparametrów modelu MLP.
+    Buduje przestrzeń parametrów na podstawie MODEL_CONFIG.
     
     Args:
         X_train: Dane treningowe
@@ -26,19 +27,62 @@ def perform_grid_search(X_train, y_train, cv=None):
     
     print(f"\n--- GRID SEARCH ---")
     print(f"Przeszukiwanie najlepszych hiperparametrów za pomocą {cv}-krotnej walidacji krzyżowej...")
+    print(f"Bazowe parametry z MODEL_CONFIG: {config.MODEL_CONFIG['hidden_layer_sizes']}")
     
-    # Definicja przestrzeni hiperparametrów do przeszukania
+    # Budowanie przestrzeni parametrów na podstawie MODEL_CONFIG
+    base_layers = config.MODEL_CONFIG['hidden_layer_sizes']
+    base_alpha = config.MODEL_CONFIG['alpha']
+    base_lr = config.MODEL_CONFIG['learning_rate_init']
+    base_activation = config.MODEL_CONFIG['activation']
+    base_solver = config.MODEL_CONFIG['solver']
+    
     param_grid = {
         'hidden_layer_sizes': [
-            (32,), (64,), (128,),           # Jedna warstwa ukryta
-            (64, 32), (128, 64), (100, 50), # Dwie warstwy ukryte
-            (128, 64, 32)                   # Trzy warstwy ukryte
+            # Warianty wokół bazowej architektury
+            (32,),                          # Mniejsza sieć
+            (64,),                          # Jedna warstwa
+            (128,),                         # Większa jedna warstwa
+            base_layers,                    # Bazowa konfiguracja (64, 32)
+            (128, 64),                      # Większa wersja bazowej
+            (100, 50),                      # Alternatywna dwuwarstwowa
+            (64, 32, 16),                   # Trzywarstwowa na bazie głównej
+            (128, 64, 32)                   # Większa trzywarstwowa
         ],
-        'alpha': [0.0001, 0.001, 0.01, 0.1],  # Regularyzacja L2
-        'learning_rate_init': [0.001, 0.01, 0.1],  # Współczynnik uczenia
-        'activation': ['relu', 'tanh'],      # Funkcja aktywacji
-        'solver': ['adam', 'lbfgs']          # Algorytm optymalizacji
+        'alpha': [
+            # Warianty wokół bazowego alpha
+            base_alpha / 10,                # 0.0001
+            base_alpha,                     # 0.001 (bazowa)
+            base_alpha * 10,                # 0.01
+            base_alpha * 100                # 0.1
+        ],
+        'learning_rate_init': [
+            # Warianty wokół bazowego learning rate
+            base_lr,                        # 0.001 (bazowa)
+            base_lr * 10,                   # 0.01
+            base_lr * 100                   # 0.1
+        ],
+        'activation': [
+            base_activation,                # 'relu' (bazowa)
+            'tanh'                          # Alternatywa
+        ],
+        'solver': [
+            base_solver,                    # 'adam' (bazowy)
+            # Usunięto 'lbfgs' z powodu problemów z konwergencją
+        ],
+        'max_iter': [
+            config.MODEL_CONFIG['max_iter'], # 1000 (bazowa)
+            1500,                           # Więcej iteracji
+            2000                            # Jeszcze więcej
+        ]
     }
+    
+    print(f"Przestrzeń przeszukiwania:")
+    print(f"  hidden_layer_sizes: {len(param_grid['hidden_layer_sizes'])} wariantów")
+    print(f"  alpha: {param_grid['alpha']}")
+    print(f"  learning_rate_init: {param_grid['learning_rate_init']}")
+    print(f"  activation: {param_grid['activation']}")
+    print(f"  solver: {param_grid['solver']}")
+    print(f"  max_iter: {param_grid['max_iter']}")
     
     # Tworzenie bazowego modelu (parametry będą nadpisane przez grid search)
     base_model = create_mlp_classifier()
@@ -49,15 +93,15 @@ def perform_grid_search(X_train, y_train, cv=None):
         param_grid=param_grid,
         cv=StratifiedKFold(n_splits=cv, shuffle=True, random_state=config.RANDOM_STATE),
         scoring=['accuracy', 'recall'],  # Główne metryki
-        refit='recall',  # Wybieramy model z najlepszym recall (ważne w medycynie)
-        n_jobs=-1,  # Wykorzystanie wszystkich dostępnych rdzeni
-        verbose=1,  # Pokazuj postęp
+        refit='recall',                  # Wybieramy model z najlepszym recall (ważne w medycynie)
+        n_jobs=-1,                       # Wykorzystanie wszystkich dostępnych rdzeni
+        verbose=1,                       # Pokazuj postęp
         return_train_score=False
     )
     
     # Przeprowadzenie grid search
     start_time = time.time()
-    print("Grid Search.")
+    print("Rozpoczynanie grid search... To może chwilę potrwać.")
     
     grid_search.fit(X_train, y_train)
     
