@@ -10,13 +10,9 @@ from src.feature_selection import perform_feature_selection
 from src.training import train_and_validate_model
 from src.evaluation import evaluate_and_report
 
+
 def main(use_grid_search=True):
-    """
-    Główna funkcja uruchamiająca cały pipeline projektu.
-    
-    Args:
-        use_grid_search (bool): Czy używać grid search do optymalizacji hiperparametrów
-    """
+ 
     print("=" * 80)
     print("PROJEKT: KLASYFIKACJA DANYCH RAKA PIERSI Z UŻYCIEM PERCEPTRONU WIELOWARSTWOWEGO")
     print("=" * 80)
@@ -80,11 +76,9 @@ def main(use_grid_search=True):
         print(f"  - Wyniki Grid Search: {config.OUTPUT_DIR}/plots/model/grid_search_results.png")
 
 def run_with_grid_search():
-    """Uruchamia projekt z grid search - najlepsze wyniki, ale wolniejsze."""
     main(use_grid_search=True)
 
 def run_fast():
-    """Uruchamia projekt bez grid search - szybciej, domyślne parametry."""
     main(use_grid_search=False)
 
 if __name__ == "__main__":

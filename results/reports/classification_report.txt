@@ -4,58 +4,64 @@ RAPORT KLASYFIKACJI RAKA PIERSI
 
 OPTYMALIZACJA HIPERPARAMETRÓW (GRID SEARCH)
 ------------------------------
-Przetestowano kombinacji parametrów: 576
-Czas grid search: 93.32 sekund
-Najlepszy recall CV: 0.9412
+Przetestowano kombinacji parametrów: 768
+Czas grid search: 338.18 sekund
+Najlepszy recall CV: 0.9353
 
 NAJLEPSZE PARAMETRY:
-  activation: tanh
+  activation: relu
   alpha: 0.0001
-  hidden_layer_sizes: (128, 64, 32)
-  learning_rate_init: 0.01
-  max_iter: 1000
+  batch_size: 32
+  early_stopping: True
+  hidden_layer_sizes: (16, 8)
+  learning_rate: constant
+  learning_rate_init: 0.001
+  max_iter: 100
+  n_iter_no_change: 20
+  random_state: 42
   solver: adam
+  validation_fraction: 0.2
 
 METRYKI KLASYFIKACJI (ZBIÓR TESTOWY)
 ------------------------------
 Accuracy:  0.9561
-Recall:    0.8810
+Recall:    0.9286
 
 MACIERZ POMYLEK
 ------------------------------
 Rzeczywiste \ Przewidywane
-Lagodny (0)    |  72 |   0 |
-Zlosliwy (1)   |   5 |  37 |
+Lagodny (0)    |  70 |   2 |
+Zlosliwy (1)   |   3 |  39 |
                |  0  |  1  |
 
 INTERPRETACJA MACIERZY POMYLEK
 ------------------------------
-True Negatives (TN):   72 (63.2%) - Poprawnie sklasyfikowane przypadki lagodne
-False Positives (FP):   0 (0.0%) - Przypadki lagodne blednie sklasyfikowane jako zlosliwe
-False Negatives (FN):   5 (4.4%) - Przypadki zlosliwe blednie sklasyfikowane jako lagodne
-True Positives (TP):   37 (32.5%) - Poprawnie sklasyfikowane przypadki zlosliwe
+True Negatives (TN):   70 (61.4%) - Poprawnie sklasyfikowane przypadki lagodne
+False Positives (FP):   2 (1.8%) - Przypadki lagodne blednie sklasyfikowane jako zlosliwe
+False Negatives (FN):   3 (2.6%) - Przypadki zlosliwe blednie sklasyfikowane jako lagodne
+True Positives (TP):   39 (34.2%) - Poprawnie sklasyfikowane przypadki zlosliwe
 
 WYNIKI WALIDACJI KRZYZOWEJ
 ------------------------------
-Accuracy:  0.9604 ± 0.0226
-Recall:    0.9412 ± 0.0492
-Loss:      0.1321 ± 0.0661
+Accuracy:  0.9165 ± 0.0323
+Recall:    0.9353 ± 0.0288
+Loss:      0.2329 ± 0.1360
 
 SZCZEGOLOWE WYNIKI DLA KAZDEGO FOLDA
 ------------------------------
 Fold | Accuracy |  Recall   | Loss
 -----|----------|----------|----------
-   1 |   0.9780 |   0.9706 |   0.0939
-   2 |   0.9890 |   1.0000 |   0.0433
-   3 |   0.9341 |   0.8824 |   0.2150
-   4 |   0.9341 |   0.8824 |   0.2025
-   5 |   0.9670 |   0.9706 |   0.1062
+   1 |   0.9451 |   0.9118 |   0.1569
+   2 |   0.9451 |   0.9706 |   0.1042
+   3 |   0.9231 |   0.9118 |   0.1923
+   4 |   0.8571 |   0.9706 |   0.4940
+   5 |   0.9121 |   0.9118 |   0.2170
 
 WNIOSKI
 ------------------------------
-- Zastosowano optymalizację hiperparametrów za pomocą grid search, co pozwoliło na
-  znalezienie najlepszej konfiguracji spośród 576 przetestowanych.
-- Model osiąga bardzo wysoką dokładność (>95%), co świadczy o jego doskonałej jakości.
-- Czułość modelu (recall <90%) może wymagać poprawy, aby minimalizować liczbę fałszywie negatywnych wyników.
-- Model nie rozpoznał 5 przypadków złośliwych, co stanowi 11.9% wszystkich przypadków złośliwych.
-  W kontekście medycznym należy dążyć do minimalizacji tej wartości.
+- Zastosowano optymalizacje hiperparametrow za pomoca grid search, co pozwolilo na
+  znalezienie najlepszej konfiguracji sposrod 768 przetestowanych.
+- Model osiaga bardzo wysoka dokladnosc (>95%), co swiadczy o jego doskonalej jakosci.
+- Model ma wysoka czulosc (recall >90%), co jest istotne w kontekscie diagnostyki medycznej.
+- Model nie rozpoznal 3 przypadkow zlosliwych, co stanowi 7.1% wszystkich przypadkow zlosliwych.
+  W kontekscie medycznym nalezy dazyc do minimalizacji tej wartosci.

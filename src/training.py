@@ -10,79 +10,26 @@ import config
 from src.model import create_mlp_classifier, save_model
 
 def perform_grid_search(X_train, y_train, cv=None):
-    """
-    Przeprowadza grid search dla optymalizacji hiperparametrów modelu MLP.
-    Buduje przestrzeń parametrów na podstawie MODEL_CONFIG.
-    
-    Args:
-        X_train: Dane treningowe
-        y_train: Etykiety treningowe
-        cv (int): Liczba foldów dla walidacji krzyżowej
-        
-    Returns:
-        dict: Wyniki grid search z najlepszym modelem
-    """
+ 
     if cv is None:
         cv = config.TRAINING_CONFIG['cv_folds']
     
     print(f"\n--- GRID SEARCH ---")
     print(f"Przeszukiwanie najlepszych hiperparametrów za pomocą {cv}-krotnej walidacji krzyżowej...")
-   
     
     
-    base_layers = config.MODEL_CONFIG['hidden_layer_sizes']
-    base_alpha = config.MODEL_CONFIG['alpha']
-    base_lr = config.MODEL_CONFIG['learning_rate_init']
-    base_activation = config.MODEL_CONFIG['activation']
-    base_solver = config.MODEL_CONFIG['solver']
+    param_grid = config.GRID_SEARCH_CONFIG['param_grid']
     
-    param_grid = {
-        'hidden_layer_sizes': [
-            
-            (32,),                          
-            (64,),                          
-            (128,),                         
-            base_layers,                    
-            (128, 64),                      
-            (100, 50),                      
-            (64, 32, 16),                   
-            (128, 64, 32)                   
-        ],
-        'alpha': [
-            
-            base_alpha / 10,                
-            base_alpha,                     
-            base_alpha * 10,                
-            base_alpha * 100                
-        ],
-        'learning_rate_init': [
-            
-            base_lr,                        
-            base_lr * 10,                   
-            base_lr * 100                   
-        ],
-        'activation': [
-            base_activation,                
-            'tanh'                          
-        ],
-        'solver': [
-            base_solver,                    
-            
-        ],
-        'max_iter': [
-            config.MODEL_CONFIG['max_iter'], 
-            1500,                           
-            2000                            
-        ]
-    }
+    print(f"Parametry do przeszukania:")
+    for param, values in param_grid.items():
+        if len(values) > 1:  
+            print(f"  {param}: {values}")
     
-    print(f"Przestrzeń przeszukiwania:")
-    print(f"  hidden_layer_sizes: {len(param_grid['hidden_layer_sizes'])} wariantów")
-    print(f"  alpha: {param_grid['alpha']}")
-    print(f"  learning_rate_init: {param_grid['learning_rate_init']}")
-    print(f"  activation: {param_grid['activation']}")
-    print(f"  solver: {param_grid['solver']}")
-    print(f"  max_iter: {param_grid['max_iter']}")
+    
+    n_combinations = 1
+    for param, values in param_grid.items():
+        n_combinations *= len(values)
+    print(f"\nŁączna liczba kombinacji do przetestowania: {n_combinations}")
     
     
     base_model = create_mlp_classifier()
@@ -92,10 +39,10 @@ def perform_grid_search(X_train, y_train, cv=None):
         estimator=base_model,
         param_grid=param_grid,
         cv=StratifiedKFold(n_splits=cv, shuffle=True, random_state=config.RANDOM_STATE),
-        scoring=['accuracy', 'recall'],  
-        refit='recall',                  
-        n_jobs=-1,                       
-        verbose=1,                       
+        scoring=config.GRID_SEARCH_CONFIG['scoring'],  
+        refit=config.GRID_SEARCH_CONFIG['refit'],      
+        n_jobs=config.GRID_SEARCH_CONFIG['n_jobs'],    
+        verbose=config.GRID_SEARCH_CONFIG['verbose'],   
         return_train_score=False
     )
     
@@ -147,13 +94,7 @@ def perform_grid_search(X_train, y_train, cv=None):
     return grid_search_results
 
 def visualize_grid_search_results(grid_search, filename="grid_search_results.png"):
-    """
-    Wizualizuje wyniki grid search.
-    
-    Args:
-        grid_search: Obiekt GridSearchCV po wykonaniu fit()
-        filename (str): Nazwa pliku do zapisu
-    """
+   
     
     results_df = pd.DataFrame(grid_search.cv_results_)
     
@@ -243,17 +184,7 @@ def visualize_grid_search_results(grid_search, filename="grid_search_results.png
     print(f"Zapisano wizualizację wyników grid search: {filename}")
 
 def train_model(model, X_train, y_train):
-    """
-    Trenuje model na danych treningowych.
-    
-    Args:
-        model: Model do wytrenowania
-        X_train: Dane treningowe
-        y_train: Etykiety treningowe
-        
-    Returns:
-        model: Wytrenowany model
-    """
+ 
     print("\n--- TRENOWANIE MODELU ---")
     
     start_time = time.time()
@@ -268,18 +199,7 @@ def train_model(model, X_train, y_train):
     return model
 
 def perform_cross_validation(model, X, y, cv=None):
-    """
-    Przeprowadza walidację krzyżową modelu.
-    
-    Args:
-        model: Model do walidacji
-        X: Dane wejściowe
-        y: Etykiety
-        cv (int): Liczba foldów
-        
-    Returns:
-        dict: Wyniki walidacji krzyżowej
-    """
+   
     
     if cv is None:
         cv = config.TRAINING_CONFIG['cv_folds']
@@ -346,13 +266,7 @@ def perform_cross_validation(model, X, y, cv=None):
     return results_summary
 
 def visualize_cross_validation_results(cv_results, filename="cv_results.png"):
-    """
-    Wizualizuje wyniki walidacji krzyżowej - tylko podstawowe metryki.
-    
-    Args:
-        cv_results (dict): Wyniki walidacji krzyżowej
-        filename (str): Nazwa pliku do zapisu wykresu
-    """
+  
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
     
     
@@ -401,16 +315,7 @@ def visualize_cross_validation_results(cv_results, filename="cv_results.png"):
     print(f"Zapisano wizualizacje wynikow walidacji krzyzowej: {filename}")
 
 def train_and_validate_model(data_dict, use_grid_search=True):
-    """
-    Główna funkcja trenująca i walidująca model.
-    
-    Args:
-        data_dict (dict): Słownik z przetworzonymi danymi
-        use_grid_search (bool): Czy użyć grid search do optymalizacji hiperparametrów
-        
-    Returns:
-        dict: Zaktualizowany słownik z wytrenowanym modelem
-    """
+
     print("\n--- TRENOWANIE I WALIDACJA MODELU ---")
     
     if use_grid_search:
