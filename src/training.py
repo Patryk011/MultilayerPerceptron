@@ -57,7 +57,7 @@ def perform_grid_search(X_train, y_train, cv=None):
     
     # Przeprowadzenie grid search
     start_time = time.time()
-    print("Rozpoczynanie grid search... To może chwilę potrwać.")
+    print("Grid Search.")
     
     grid_search.fit(X_train, y_train)
     
