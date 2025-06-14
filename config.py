@@ -56,7 +56,7 @@ GRID_SEARCH_CONFIG = {
         'solver': ['adam', 'sgd'],                      
         'alpha': [0.0001, 0.001, 0.01, 0.1],          
         'learning_rate': ['constant', 'adaptive'],     
-        'max_iter': [ 500, 1000, 1500],           
+        'max_iter': [500, 1000, 1500],           
         'batch_size': [32],                            
         'learning_rate_init': [0.001],                 
         'early_stopping': [True],                      
