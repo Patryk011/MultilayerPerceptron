@@ -10,24 +10,24 @@ import config
 
 def evaluate_model(model, X_test, y_test, threshold=None):
  
-    # Używamy parametrów z konfiguracji, jeśli nie podano
+    
     if threshold is None:
         threshold = config.EVALUATION_CONFIG['threshold']
     
     print("\n--- EWALUACJA MODELU ---")
     
-    # Predykcje modelu
+    
     y_pred = model.predict(X_test)
     
-    # Metryki podstawowe
+    
     accuracy = accuracy_score(y_test, y_pred)
 
     recall = recall_score(y_test, y_pred)
     
-    # Macierz pomyłek
+    
     cm = confusion_matrix(y_test, y_pred)
     
-    # Wyświetlenie wyników
+    
     print(f"Wyniki ewaluacji modelu:")
     print(f"  Accuracy: {accuracy:.4f}")
     print(f"  Recall: {recall:.4f}")
@@ -38,7 +38,7 @@ def evaluate_model(model, X_test, y_test, threshold=None):
     print(f"Zlosliwy (1)   | {cm[1,0]:3d} | {cm[1,1]:3d} |")
     print(f"               |  0  |  1  |")
     
-    # Przygotowanie wyników
+    
     evaluation_results = {
         'accuracy': accuracy,
         'recall': recall,
@@ -47,7 +47,7 @@ def evaluate_model(model, X_test, y_test, threshold=None):
         'threshold': threshold
     }
     
-    # Wizualizacja macierzy pomyłek
+    
     visualize_confusion_matrix(cm)
     
     return evaluation_results
@@ -56,7 +56,7 @@ def visualize_confusion_matrix(cm, filename="confusion_matrix.png"):
  
     plt.figure(figsize=config.VISUALIZATION_CONFIG['figsize_medium'])
     
-    # Tworzymy mapę ciepła macierzy pomyłek
+    
     sns.heatmap(
         cm, 
         annot=True, 
@@ -71,7 +71,7 @@ def visualize_confusion_matrix(cm, filename="confusion_matrix.png"):
     plt.ylabel('Rzeczywiste')
     plt.title('Macierz pomylek')
     
-    # Dodajemy wartości procentowe jako tekst
+    
     total = np.sum(cm)
     for i in range(cm.shape[0]):
         for j in range(cm.shape[1]):
@@ -100,12 +100,12 @@ def generate_text_report(evaluation_results, cv_results=None, grid_search_result
     filepath = os.path.join(config.OUTPUT_DIR, "reports", filename)
     
     with open(filepath, 'w', encoding='utf-8') as f:
-        # Nagłówek
+        
         f.write("=" * 60 + "\n")
         f.write("RAPORT KLASYFIKACJI RAKA PIERSI\n")
         f.write("=" * 60 + "\n\n")
         
-        # Porównanie modeli (jeśli dostępne)
+        
         if model_comparison:
             f.write("PORÓWNANIE: MODEL BAZOWY vs ZOPTYMALIZOWANY\n")
             f.write("-" * 30 + "\n")
@@ -123,7 +123,7 @@ def generate_text_report(evaluation_results, cv_results=None, grid_search_result
             f.write(f"  Accuracy: {model_comparison['accuracy_improvement']:+.4f} ({acc_perc:+.2f}%)\n")
             f.write(f"  Recall:   {model_comparison['recall_improvement']:+.4f} ({rec_perc:+.2f}%)\n\n")
         
-        # Informacja o grid search
+        
         if grid_search_results:
             f.write("OPTYMALIZACJA HIPERPARAMETRÓW (GRID SEARCH)\n")
             f.write("-" * 30 + "\n")
@@ -136,13 +136,13 @@ def generate_text_report(evaluation_results, cv_results=None, grid_search_result
                 f.write(f"  {param}: {value}\n")
             f.write("\n")
         
-        # Podstawowe metryki
+        
         f.write("METRYKI KLASYFIKACJI (ZBIÓR TESTOWY)\n")
         f.write("-" * 30 + "\n")
         f.write(f"Accuracy:  {evaluation_results['accuracy']:.4f}\n")
         f.write(f"Recall:    {evaluation_results['recall']:.4f}\n\n")
         
-        # Macierz pomyłek
+        
         f.write("MACIERZ POMYLEK\n")
         f.write("-" * 30 + "\n")
         cm = evaluation_results['confusion_matrix']
@@ -151,7 +151,7 @@ def generate_text_report(evaluation_results, cv_results=None, grid_search_result
         f.write(f"Zlosliwy (1)   | {cm[1,0]:3d} | {cm[1,1]:3d} |\n")
         f.write(f"               |  0  |  1  |\n\n")
         
-        # Interpretacja macierzy pomyłek
+        
         tn, fp, fn, tp = cm.ravel()
         total = tn + fp + fn + tp
         
@@ -162,7 +162,7 @@ def generate_text_report(evaluation_results, cv_results=None, grid_search_result
         f.write(f"False Negatives (FN): {fn:3d} ({fn/total*100:.1f}%) - Przypadki zlosliwe blednie sklasyfikowane jako lagodne\n")
         f.write(f"True Positives (TP):  {tp:3d} ({tp/total*100:.1f}%) - Poprawnie sklasyfikowane przypadki zlosliwe\n\n")
         
-        # Walidacja krzyżowa (jeśli dostępna)
+        
         if cv_results:
             f.write("WYNIKI WALIDACJI KRZYZOWEJ\n")
             f.write("-" * 30 + "\n")
@@ -181,7 +181,7 @@ def generate_text_report(evaluation_results, cv_results=None, grid_search_result
                 f.write(f"{i+1:4d} | {acc:8.4f} | {rec:8.4f} | {loss:8.4f}\n")
             f.write("\n")
         
-        # Wnioski
+        
         f.write("WNIOSKI\n")
         f.write("-" * 30 + "\n")
         
@@ -231,14 +231,14 @@ def evaluate_and_report(data_dict):
     """
     print("\n--- EWALUACJA I RAPORTOWANIE ---")
     
-    # Ewaluacja modelu
+    
     evaluation_results = evaluate_model(
         data_dict['model'],
         data_dict['X_test_selected'],
         data_dict['y_test']
     )
     
-    # Generowanie raportu z uwzględnieniem porównania modeli
+    
     generate_text_report(
         evaluation_results, 
         cv_results=data_dict.get('cv_results', None),
@@ -246,7 +246,7 @@ def evaluate_and_report(data_dict):
         model_comparison=data_dict.get('model_comparison', None)
     )
     
-    # Aktualizacja słownika danych
+    
     data_dict.update({
         'evaluation_results': evaluation_results
     })
@@ -263,21 +263,21 @@ def evaluate_and_report(data_dict):
     """
     print("\n--- EWALUACJA I RAPORTOWANIE ---")
     
-    # Ewaluacja modelu
+    
     evaluation_results = evaluate_model(
         data_dict['model'],
         data_dict['X_test_selected'],
         data_dict['y_test']
     )
     
-    # Generowanie raportu z uwzględnieniem grid search
+    
     generate_text_report(
         evaluation_results, 
         cv_results=data_dict.get('cv_results', None),
         grid_search_results=data_dict.get('grid_search_results', None)
     )
     
-    # Aktualizacja słownika danych
+    
     data_dict.update({
         'evaluation_results': evaluation_results
     })
@@ -286,40 +286,40 @@ def evaluate_and_report(data_dict):
  
     print("\n--- EWALUACJA I RAPORTOWANIE ---")
     
-    # Ewaluacja modelu
+    
     evaluation_results = evaluate_model(
         data_dict['model'],
         data_dict['X_test_selected'],
         data_dict['y_test']
     )
     
-    # Generowanie raportu
+    
     generate_text_report(
         evaluation_results, 
         cv_results=data_dict.get('cv_results', None)
     )
     
-    # Aktualizacja słownika danych
+    
     data_dict.update({
         'evaluation_results': evaluation_results
     })
     
     return data_dict
 
-# Gdy moduł jest uruchamiany bezpośrednio
+
 if __name__ == "__main__":
     from data_processing import process_data
     from feature_selection import perform_feature_selection
     from training import train_and_validate_model
     
-    # Przetwarzanie danych
+    
     data_dict = process_data()
     
-    # Selekcja cech
+    
     data_dict = perform_feature_selection(data_dict)
     
-    # Trenowanie i walidacja modelu
+    
     data_dict = train_and_validate_model(data_dict)
     
-    # Ewaluacja i raportowanie
+    
     data_dict = evaluate_and_report(data_dict)

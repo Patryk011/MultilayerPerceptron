@@ -1,0 +1,61 @@
+============================================================
+RAPORT KLASYFIKACJI RAKA PIERSI
+============================================================
+
+OPTYMALIZACJA HIPERPARAMETRÓW (GRID SEARCH)
+------------------------------
+Przetestowano kombinacji parametrów: 576
+Czas grid search: 93.32 sekund
+Najlepszy recall CV: 0.9412
+
+NAJLEPSZE PARAMETRY:
+  activation: tanh
+  alpha: 0.0001
+  hidden_layer_sizes: (128, 64, 32)
+  learning_rate_init: 0.01
+  max_iter: 1000
+  solver: adam
+
+METRYKI KLASYFIKACJI (ZBIÓR TESTOWY)
+------------------------------
+Accuracy:  0.9561
+Recall:    0.8810
+
+MACIERZ POMYLEK
+------------------------------
+Rzeczywiste \ Przewidywane
+Lagodny (0)    |  72 |   0 |
+Zlosliwy (1)   |   5 |  37 |
+               |  0  |  1  |
+
+INTERPRETACJA MACIERZY POMYLEK
+------------------------------
+True Negatives (TN):   72 (63.2%) - Poprawnie sklasyfikowane przypadki lagodne
+False Positives (FP):   0 (0.0%) - Przypadki lagodne blednie sklasyfikowane jako zlosliwe
+False Negatives (FN):   5 (4.4%) - Przypadki zlosliwe blednie sklasyfikowane jako lagodne
+True Positives (TP):   37 (32.5%) - Poprawnie sklasyfikowane przypadki zlosliwe
+
+WYNIKI WALIDACJI KRZYZOWEJ
+------------------------------
+Accuracy:  0.9604 ± 0.0226
+Recall:    0.9412 ± 0.0492
+Loss:      0.1321 ± 0.0661
+
+SZCZEGOLOWE WYNIKI DLA KAZDEGO FOLDA
+------------------------------
+Fold | Accuracy |  Recall   | Loss
+-----|----------|----------|----------
+   1 |   0.9780 |   0.9706 |   0.0939
+   2 |   0.9890 |   1.0000 |   0.0433
+   3 |   0.9341 |   0.8824 |   0.2150
+   4 |   0.9341 |   0.8824 |   0.2025
+   5 |   0.9670 |   0.9706 |   0.1062
+
+WNIOSKI
+------------------------------
+- Zastosowano optymalizację hiperparametrów za pomocą grid search, co pozwoliło na
+  znalezienie najlepszej konfiguracji spośród 576 przetestowanych.
+- Model osiąga bardzo wysoką dokładność (>95%), co świadczy o jego doskonałej jakości.
+- Czułość modelu (recall <90%) może wymagać poprawy, aby minimalizować liczbę fałszywie negatywnych wyników.
+- Model nie rozpoznał 5 przypadków złośliwych, co stanowi 11.9% wszystkich przypadków złośliwych.
+  W kontekście medycznym należy dążyć do minimalizacji tej wartości.

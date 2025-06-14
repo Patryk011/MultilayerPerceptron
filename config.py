@@ -1,21 +1,20 @@
 RANDOM_STATE = 42
 OUTPUT_DIR = "results"
 
-# Parametry przetwarzania danych
+
 DATA_CONFIG = {
     'test_size': 0.20,       
     'random_state': RANDOM_STATE,
     'dataset_id': 17,        
 }
 
-#Parametry selekcji cech
 FEATURE_SELECTION_CONFIG = {
    'method': 'anova',       
    'k': 10,                 
 }
 
 
-# Parametry wizualizacji
+
 VISUALIZATION_CONFIG = {
     'figsize_medium': (8, 6),    
     'figsize_large': (10, 8),    
@@ -23,7 +22,7 @@ VISUALIZATION_CONFIG = {
     'style': 'seaborn-v0_8',     
 }
 
-# Parametry modelu scikit-learn MLP
+
 MODEL_CONFIG = {
     'hidden_layer_sizes': (64,32),  
     'activation': 'relu',           
@@ -39,14 +38,14 @@ MODEL_CONFIG = {
     'random_state': RANDOM_STATE,    
 }
 
-# Parametry treningu
+
 TRAINING_CONFIG = {
     'cv_folds': 5,                   
 }
 
 
 
-# Parametry ewaluacji modelu
+
 EVALUATION_CONFIG = {
     'threshold': 0.5,                
 }

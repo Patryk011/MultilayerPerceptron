@@ -21,7 +21,7 @@ def main(use_grid_search=True):
     print("PROJEKT: KLASYFIKACJA DANYCH RAKA PIERSI Z UŻYCIEM PERCEPTRONU WIELOWARSTWOWEGO")
     print("=" * 80)
     
-    # Informacja o trybie
+    
     if use_grid_search:
         print("🔍 TRYB: Grid Search - optymalizacja hiperparametrów (może potrwać dłużej)")
     else:
@@ -36,7 +36,7 @@ def main(use_grid_search=True):
     data_dict = perform_feature_selection(data_dict)
     
     print("\n[KROK 3] TRENOWANIE I WALIDACJA MODELU")
-    # TUTAJ PRZEKAZUJEMY PARAMETR use_grid_search
+    
     data_dict = train_and_validate_model(data_dict, use_grid_search=use_grid_search)
     
     print("\n[KROK 4] EWALUACJA I RAPORTOWANIE")
@@ -59,7 +59,7 @@ def main(use_grid_search=True):
         print(f"  Średnia dokładność CV: {cv_res['accuracy']['mean']:.4f} ± {cv_res['accuracy']['std']:.4f}")
         print(f"  Średni recall CV: {cv_res['recall']['mean']:.4f} ± {cv_res['recall']['std']:.4f}")
     
-    # DODATKOWE INFORMACJE O GRID SEARCH
+    
     if use_grid_search and 'grid_search_results' in data_dict:
         gs_res = data_dict['grid_search_results']
         print(f"\nWYNIKI GRID SEARCH:")
