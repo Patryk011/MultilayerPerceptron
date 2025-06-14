@@ -27,7 +27,7 @@ def perform_grid_search(X_train, y_train, cv=None):
     
     print(f"\n--- GRID SEARCH ---")
     print(f"Przeszukiwanie najlepszych hiperparametrów za pomocą {cv}-krotnej walidacji krzyżowej...")
-    print(f"Bazowe parametry z MODEL_CONFIG: {config.MODEL_CONFIG['hidden_layer_sizes']}")
+   
     
     # Budowanie przestrzeni parametrów na podstawie MODEL_CONFIG
     base_layers = config.MODEL_CONFIG['hidden_layer_sizes']
