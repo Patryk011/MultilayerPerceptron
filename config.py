@@ -44,6 +44,24 @@ TRAINING_CONFIG = {
     'cv_folds': 5,                    # Liczba foldów dla walidacji krzyżowej
 }
 
+GRID_SEARCH_CONFIG = {
+    'param_grid': {
+        'hidden_layer_sizes': [
+            (32,), (64,), (128,),           # Jedna warstwa ukryta
+            (64, 32), (128, 64), (100, 50), # Dwie warstwy ukryte
+            (128, 64, 32)                   # Trzy warstwy ukryte
+        ],
+        'alpha': [0.0001, 0.001, 0.01, 0.1],  # Regularyzacja L2
+        'learning_rate_init': [0.001, 0.01, 0.1],  # Współczynnik uczenia
+        'activation': ['relu', 'tanh'],      # Funkcja aktywacji
+        'solver': ['adam', 'lbfgs']          # Algorytm optymalizacji
+    },
+    'scoring': ['accuracy', 'recall'],       # Metryki do optymalizacji
+    'refit': 'recall',                      # Metryka do wyboru najlepszego modelu
+    'n_jobs': -1,                           # Liczba równoległych procesów (-1 = wszystkie dostępne)
+    'verbose': 1,                           # Poziom szczegółowości komunikatów
+}
+
 # Parametry ewaluacji modelu
 EVALUATION_CONFIG = {
     'threshold': 0.5,                 # Próg decyzyjny dla klasyfikacji binarnej

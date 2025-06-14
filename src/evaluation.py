@@ -86,8 +86,16 @@ def visualize_confusion_matrix(cm, filename="confusion_matrix.png"):
     
     print(f"Zapisano wizualizacje macierzy pomylek: {filename}")
 
-def generate_text_report(evaluation_results, cv_results=None, filename="classification_report.txt"):
- 
+def generate_text_report(evaluation_results, cv_results=None, grid_search_results=None, filename="classification_report.txt"):
+    """
+    Generuje szczegółowy raport tekstowy z wyników klasyfikacji.
+    
+    Args:
+        evaluation_results (dict): Wyniki ewaluacji modelu
+        cv_results (dict): Wyniki walidacji krzyżowej
+        grid_search_results (dict): Wyniki grid search (opcjonalne)
+        filename (str): Nazwa pliku raportu
+    """
     filepath = os.path.join(config.OUTPUT_DIR, "reports", filename)
     
     with open(filepath, 'w', encoding='utf-8') as f:
@@ -96,8 +104,21 @@ def generate_text_report(evaluation_results, cv_results=None, filename="classifi
         f.write("RAPORT KLASYFIKACJI RAKA PIERSI\n")
         f.write("=" * 60 + "\n\n")
         
+        # Informacja o grid search
+        if grid_search_results:
+            f.write("OPTYMALIZACJA HIPERPARAMETRÓW (GRID SEARCH)\n")
+            f.write("-" * 30 + "\n")
+            f.write(f"Przetestowano kombinacji parametrów: {grid_search_results['n_combinations']}\n")
+            f.write(f"Czas grid search: {grid_search_results['search_time']:.2f} sekund\n")
+            f.write(f"Najlepszy recall CV: {grid_search_results['best_score']:.4f}\n\n")
+            
+            f.write("NAJLEPSZE PARAMETRY:\n")
+            for param, value in grid_search_results['best_params'].items():
+                f.write(f"  {param}: {value}\n")
+            f.write("\n")
+        
         # Podstawowe metryki
-        f.write("METRYKI KLASYFIKACJI\n")
+        f.write("METRYKI KLASYFIKACJI (ZBIÓR TESTOWY)\n")
         f.write("-" * 30 + "\n")
         f.write(f"Accuracy:  {evaluation_results['accuracy']:.4f}\n")
         f.write(f"Recall:    {evaluation_results['recall']:.4f}\n\n")
@@ -127,7 +148,6 @@ def generate_text_report(evaluation_results, cv_results=None, filename="classifi
             f.write("WYNIKI WALIDACJI KRZYZOWEJ\n")
             f.write("-" * 30 + "\n")
             f.write(f"Accuracy:  {cv_results['accuracy']['mean']:.4f} ± {cv_results['accuracy']['std']:.4f}\n")
-            
             f.write(f"Recall:    {cv_results['recall']['mean']:.4f} ± {cv_results['recall']['std']:.4f}\n")
             f.write(f"Loss:      {cv_results['loss']['mean']:.4f} ± {cv_results['loss']['std']:.4f}\n\n")
             
@@ -137,7 +157,6 @@ def generate_text_report(evaluation_results, cv_results=None, filename="classifi
             f.write("-----|----------|----------|----------\n")
             for i in range(len(cv_results['accuracy']['values'])):
                 acc = cv_results['accuracy']['values'][i]
-              
                 rec = cv_results['recall']['values'][i]
                 loss = cv_results['loss']['values'][i]
                 f.write(f"{i+1:4d} | {acc:8.4f} | {rec:8.4f} | {loss:8.4f}\n")
@@ -146,6 +165,10 @@ def generate_text_report(evaluation_results, cv_results=None, filename="classifi
         # Wnioski
         f.write("WNIOSKI\n")
         f.write("-" * 30 + "\n")
+        
+        if grid_search_results:
+            f.write("- Zastosowano optymalizacje hiperparametrow za pomoca grid search, co pozwolilo na\n")
+            f.write(f"  znalezienie najlepszej konfiguracji sposrod {grid_search_results['n_combinations']} przetestowanych.\n")
         
         if evaluation_results['accuracy'] > 0.95:
             f.write("- Model osiaga bardzo wysoka dokladnosc (>95%), co swiadczy o jego doskonalej jakosci.\n")
@@ -166,12 +189,41 @@ def generate_text_report(evaluation_results, cv_results=None, filename="classifi
         if fn > 0:
             f.write(f"- Model nie rozpoznal {fn} przypadkow zlosliwych, co stanowi {fn/(fn+tp)*100:.1f}% wszystkich przypadkow zlosliwych.\n")
             f.write("  W kontekscie medycznym nalezy dazyc do minimalizacji tej wartosci.\n")
-        
-    
     
     print(f"Raport klasyfikacji zapisany do: {filepath}")
 
 def evaluate_and_report(data_dict):
+    """
+    Przeprowadza ewaluację modelu i generuje raport.
+    
+    Args:
+        data_dict (dict): Słownik z danymi i wytrenowanym modelem
+        
+    Returns:
+        dict: Zaktualizowany słownik z wynikami ewaluacji
+    """
+    print("\n--- EWALUACJA I RAPORTOWANIE ---")
+    
+    # Ewaluacja modelu
+    evaluation_results = evaluate_model(
+        data_dict['model'],
+        data_dict['X_test_selected'],
+        data_dict['y_test']
+    )
+    
+    # Generowanie raportu z uwzględnieniem grid search
+    generate_text_report(
+        evaluation_results, 
+        cv_results=data_dict.get('cv_results', None),
+        grid_search_results=data_dict.get('grid_search_results', None)
+    )
+    
+    # Aktualizacja słownika danych
+    data_dict.update({
+        'evaluation_results': evaluation_results
+    })
+    
+    return data_dict
  
     print("\n--- EWALUACJA I RAPORTOWANIE ---")
     
